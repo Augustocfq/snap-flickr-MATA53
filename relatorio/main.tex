@@ -1,0 +1,45 @@
+\documentclass[sigconf, nonacm]{webmedia}
+
+\usepackage[brazil]{babel}
+
+\AtBeginDocument{%
+  \providecommand\BibTeX{{%
+    \normalfont B\kern-0.5em{\scshape i\kern-0.25em b}\kern-0.8em\TeX}}}
+
+\settopmatter{printacmref=false, printfolios=false}
+
+\begin{document}
+
+\title{Analisando Grafos do SNAP: o grafo web-flickr (G114)}
+
+\author{Augusto Cesar Ferreira de Quadros}
+\email{augustoquadros@ufba.br}
+\affiliation{%
+  \institution{Universidade Federal da Bahia, Instituto de Computação}
+  \city{Salvador}
+  \state{BA}
+  \country{Brasil}
+}
+
+\renewcommand{\shortauthors}{Quadros}
+
+\begin{abstract}
+  \input{secoes/resumo}
+\end{abstract}
+
+\keywords{teoria dos grafos, SNAP, web-flickr, análise de redes}
+
+\maketitle
+
+\input{secoes/determinacao}
+\input{secoes/descricao}
+\input{secoes/metodologia}
+\input{secoes/resultados}
+\input{secoes/discussao}
+\input{secoes/conclusao}
+\input{secoes/repositorio}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{referencias}
+
+\end{document}

@@ -1,0 +1,11 @@
+\section{Descrição do grafo original}
+\label{sec:descricao}
+
+O web-flickr faz parte da coleção de grafos do SNAP (Stanford Large Network Dataset Collection)~\cite{snapnets} e foi construído por McAuley e Leskovec~\cite{mcauley2012image} para estudar a rotulação de imagens com o uso de metadados de redes sociais.
+
+Cada vértice é uma imagem do Flickr. Uma aresta liga duas imagens que compartilham metadados: imagens do mesmo local, submetidas à mesma galeria, grupo ou conjunto, com tags em comum ou tiradas por amigos. A relação é simétrica, então o grafo é não direcionado. O SNAP distribui o grafo como uma lista de arestas comprimida, \texttt{flickrEdges.txt.gz}, em que cada par não ordenado de vértices aparece uma vez.
+
+O SNAP declara as seguintes estatísticas para o grafo~\cite{snapnets}: 105.938 vértices, 2.316.948 arestas, maior componente conexa com 105.722 vértices, coeficiente de clusterização médio de 0,0891, 107.987.357 triângulos e diâmetro 9. Esses valores servem apenas de referência: o tratamento dos dados é descrito na Seção~\ref{sec:tratamento}, e as medidas são recalculadas a partir do arquivo original na Seção~\ref{sec:parte1}.
+
+\subsection{Tratamento realizado}
+\label{sec:tratamento}

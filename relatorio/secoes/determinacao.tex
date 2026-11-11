@@ -1,0 +1,18 @@
+\section{Determinação do grafo}
+\label{sec:determinacao}
+
+O grafo analisado é determinado pelo número de matrícula $M$, segundo a regra
+\begin{equation}
+  f(M) = \big(s(M) \times (u(M) + 1)\big) \bmod 129,
+\end{equation}
+em que $s(M)$ é a soma dos dígitos de $M$ e $u(M)$ é o número formado pelos dois últimos dígitos de $M$. Se o resultado for $0$, considera-se $129$. O valor obtido é o índice do grafo na planilha ANALISANDO-SNAP-DATASET, que lista os grafos G1 a G129.
+
+Para a matrícula $M = 224215938$:
+\begin{align*}
+  s(M) &= 2 + 2 + 4 + 2 + 1 + 5 + 9 + 3 + 8 = 36,\\
+  u(M) &= 38,\\
+  s(M) \times (u(M) + 1) &= 36 \times 39 = 1404,\\
+  1404 \bmod 129 &= 1404 - 10 \times 129 = 1404 - 1290 = 114.
+\end{align*}
+
+Logo, $f(224215938) = 114$, e o grafo atribuído é o G114 da planilha: o web-flickr, da coleção do SNAP~\cite{snapnets}.

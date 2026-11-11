@@ -6,3 +6,4 @@ data/raw/*
 !data/raw/.gitkeep
 
 relatorio/build/
+relatorio/template
