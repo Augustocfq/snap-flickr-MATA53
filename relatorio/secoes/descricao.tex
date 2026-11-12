@@ -9,3 +9,25 @@ O SNAP declara as seguintes estatísticas para o grafo~\cite{snapnets}: 105.938 
 
 \subsection{Tratamento realizado}
 \label{sec:tratamento}
+
+O arquivo original foi convertido em um grafo simples não direcionado, e dele se extraiu a maior componente conexa. A Tabela~\ref{tab:tratamento} compara os três conjuntos.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Vértices, arestas, auto-laços e arestas repetidas da lista de arestas original, do grafo simples obtido pelo tratamento e da sua maior componente conexa.}
+  \label{tab:tratamento}
+  \input{../results/tables/tratamento.tex}
+\end{table}
+
+Cada linha do arquivo foi tratada como uma aresta não ordenada, porque a relação entre imagens que compartilham metadados é simétrica. Os auto-laços foram removidos e, entre as arestas que ligam o mesmo par de vértices, em qualquer ordem, manteve-se uma só, de modo que o resultado é um grafo simples. A Tabela~\ref{tab:tratamento} mostra que o arquivo original não tinha auto-laços nem arestas repetidas, o que confirma a declaração do SNAP de que cada par aparece uma vez: o grafo simples tem os mesmos vértices e arestas da lista original. O conjunto de vértices é o dos extremos das arestas, pois o arquivo não lista vértices isolados.
+
+Os vértices foram renumerados de $0$ a $n-1$, na ordem crescente do identificador original, para que possam indexar diretamente as listas de adjacência usadas pelas implementações. O identificador original de cada vértice foi guardado em um mapa, que permite voltar às imagens do Flickr.
+
+O grafo é desconexo: a maior componente conexa não contém todos os vértices (Tabela~\ref{tab:tratamento}). O seu tamanho coincide com os 105.722 vértices declarados pelo SNAP. A maior componente recebeu numeração própria, de $0$ a $n_{\mathrm{lcc}}-1$, também registrada no mapa de identificadores.
+
+A política adotada para o grafo desconexo foi a seguinte:
+\begin{itemize}
+  \item O grafo simples completo é usado nas medidas que não dependem de conexidade (número de vértices e de arestas, graus e sua distribuição, densidade, componentes conexas, coeficiente de clusterização e triângulos) e nos algoritmos que se aplicam a grafos desconexos (busca em largura e em profundidade, verificação de eulerianidade, pontos de articulação e pontes, Dijkstra).
+  \item A maior componente conexa é usada nas medidas de distância (diâmetro, raio, comprimento médio dos caminhos e o comprimento médio da análise small-world), porque a distância entre vértices de componentes diferentes é infinita. Ela também é usada na árvore geradora mínima, porque só um grafo conexo tem árvore geradora, e na análise de robustez, como recomenda a descrição do trabalho.
+\end{itemize}
+Como a maior componente reúne quase todos os vértices e arestas do grafo (Tabela~\ref{tab:tratamento}), as análises feitas sobre ela representam o grafo quase inteiro.
