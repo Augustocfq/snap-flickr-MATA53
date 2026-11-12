@@ -1,2 +1,26 @@
 \subsection{Parte I -- Análise estrutural}
 \label{sec:parte1}
+
+\subsubsection{Medidas básicas e componentes conexas}
+
+As medidas desta subseção foram calculadas de forma exata sobre o grafo simples completo, com $n$ vértices e $m$ arestas. O grau médio é a média dos graus de todos os vértices, e a densidade é $2m/(n(n-1))$, a fração dos pares de vértices que são ligados por uma aresta. A Tabela~\ref{tab:basicas} reúne os valores.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Medidas básicas do grafo simples completo, calculadas de forma exata com o networkx.}
+  \label{tab:basicas}
+  \input{../results/tables/basicas.tex}
+\end{table}
+
+Os números de vértices e de arestas coincidem com os declarados pelo SNAP~\cite{snapnets}, como esperado, já que o tratamento não removeu nenhuma aresta (Seção~\ref{sec:tratamento}). O grau médio coincide com $2m/n$, o que confere a soma dos graus com o dobro do número de arestas. O grau mínimo é 1, pois o arquivo só lista vértices que são extremo de alguma aresta. O grau máximo é muito maior que o grau médio, ou seja, há vértices com muito mais vizinhos que o típico. A densidade é inferior a um milésimo: apesar de cada imagem ter, em média, dezenas de vizinhas, o grafo é esparso, porque o número de pares possíveis cresce com $n^2$ e o de arestas não acompanha esse crescimento.
+
+O grafo tem várias componentes conexas (Tabela~\ref{tab:basicas}). Como a maioria delas é muito pequena, a Tabela~\ref{tab:componentes} não lista cada componente: a maior aparece sozinha na primeira linha, e as demais são agrupadas por tamanho, com o número de componentes de cada tamanho. O número de componentes obtido pelo networkx foi conferido com o do igraph, e a soma dos tamanhos de todas as componentes é igual a $n$.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Componentes conexas do grafo simples completo agrupadas por tamanho (número de vértices): para cada tamanho, o número de componentes que o têm.}
+  \label{tab:componentes}
+  \input{../results/tables/componentes.tex}
+\end{table}
+
+A Tabela~\ref{tab:componentes} mostra uma componente gigante, cujo tamanho coincide com os 105.722 vértices declarados pelo SNAP~\cite{snapnets}, e uma coleção de componentes minúsculas, a maior delas com 11 vértices e a maioria formada por pares de imagens ligadas só entre si. Essas componentes são grupos de imagens que não compartilham metadados com o restante da coleção. Como reúnem uma parcela desprezível dos vértices, a política de usar a maior componente nas medidas de distância (Seção~\ref{sec:tratamento}) praticamente não descarta informação.
