@@ -24,3 +24,25 @@ O grafo tem várias componentes conexas (Tabela~\ref{tab:basicas}). Como a maior
 \end{table}
 
 A Tabela~\ref{tab:componentes} mostra uma componente gigante, cujo tamanho coincide com os 105.722 vértices declarados pelo SNAP~\cite{snapnets}, e uma coleção de componentes minúsculas, a maior delas com 11 vértices e a maioria formada por pares de imagens ligadas só entre si. Essas componentes são grupos de imagens que não compartilham metadados com o restante da coleção. Como reúnem uma parcela desprezível dos vértices, a política de usar a maior componente nas medidas de distância (Seção~\ref{sec:tratamento}) praticamente não descarta informação.
+
+\subsubsection{Distribuição de graus}
+
+A distribuição de graus foi calculada de forma exata sobre o grafo simples completo: para cada grau $k$, contou-se o número de vértices com esse grau, e $P(k)$ é essa contagem dividida por $n$. A soma das contagens é igual a $n$, e a soma de $k$ vezes a contagem de cada grau é igual a $2m$, como deve ser.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{../results/figures/graus_hist.pdf}
+  \caption{Histograma dos graus do grafo simples completo em escala linear: para cada grau $k$, o número de vértices que o têm.}
+  \label{fig:graus_hist}
+\end{figure}
+
+Na escala linear (Figura~\ref{fig:graus_hist}), quase toda a massa da distribuição se concentra numa barra estreita junto da origem, enquanto o eixo horizontal se estende até o grau máximo da Tabela~\ref{tab:basicas}. A distribuição é, portanto, fortemente assimétrica à direita: a maioria das imagens tem poucas vizinhas, e uns poucos vértices de grau muito alto, invisíveis nessa escala, puxam o grau médio para bem acima do grau típico.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{../results/figures/graus_loglog.pdf}
+  \caption{Distribuição de graus $P(k)$ do grafo simples completo em escala log-log: cada ponto é a fração dos vértices com grau $k$.}
+  \label{fig:graus_loglog}
+\end{figure}
+
+A escala log-log (Figura~\ref{fig:graus_loglog}) revela o que a escala linear esconde. Os graus de 1 a 4 são raros, e o valor mais frequente é $k = 5$. A partir dele, $P(k)$ decresce de forma contínua ao longo de mais de duas ordens de grandeza de $k$, com uma elevação local perto de $k = 100$. A cauda é longa: há vértices com centenas e milhares de vizinhos, os hubs do grafo, e o de maior grau fica isolado no extremo direito, bem distante dos demais. Na cauda, muitos graus aparecem uma única vez, o que forma a faixa horizontal de pontos na base da figura. Se essa cauda segue ou não uma lei de potência é examinado na Seção~\ref{sec:parte3}.
