@@ -46,3 +46,22 @@ Na escala linear (Figura~\ref{fig:graus_hist}), quase toda a massa da distribui�
 \end{figure}
 
 A escala log-log (Figura~\ref{fig:graus_loglog}) revela o que a escala linear esconde. Os graus de 1 a 4 são raros, e o valor mais frequente é $k = 5$. A partir dele, $P(k)$ decresce de forma contínua ao longo de mais de duas ordens de grandeza de $k$, com uma elevação local perto de $k = 100$. A cauda é longa: há vértices com centenas e milhares de vizinhos, os hubs do grafo, e o de maior grau fica isolado no extremo direito, bem distante dos demais. Na cauda, muitos graus aparecem uma única vez, o que forma a faixa horizontal de pontos na base da figura. Se essa cauda segue ou não uma lei de potência é examinado na Seção~\ref{sec:parte3}.
+
+\subsubsection{Clusterização e triângulos}
+
+O número de triângulos, o coeficiente de clusterização médio e a transitividade global foram calculados de forma exata sobre o grafo simples completo, com o networkx, e conferidos com o igraph. O networkx conta os triângulos $T(v)$ de cada vértice $v$. Como cada triângulo é contado uma vez em cada um dos seus três vértices, o número de triângulos é $\sum_v T(v)/3$. Verificou-se que essa soma é múltipla de 3 e que o resultado coincide com a contagem direta do igraph.
+
+O coeficiente de clusterização local de um vértice $v$ de grau $k_v \geq 2$ é $C_v = 2T(v)/(k_v(k_v-1))$, a fração dos pares de vizinhos de $v$ que são ligados entre si. Um vértice de grau menor que 2 não tem par de vizinhos, e para ele adotou-se a convenção $C_v = 0$. O coeficiente médio é a média de $C_v$ sobre todos os $n$ vértices, incluídos os de grau 1 (Tabela~\ref{tab:basicas}). A transitividade global é o triplo do número de triângulos dividido pelo número de caminhos de comprimento 2. A Tabela~\ref{tab:clusterizacao} reúne os valores e o tempo de cada cálculo nas duas bibliotecas.
+
+\begin{table*}[htbp]
+  \centering
+  \caption{Triângulos, coeficiente de clusterização médio e transitividade global do grafo simples completo, calculados de forma exata, com o tempo de cada cálculo no networkx e no igraph. Os valores coincidem nas duas bibliotecas.}
+  \label{tab:clusterizacao}
+  \input{../results/tables/clusterizacao.tex}
+\end{table*}
+
+O número de triângulos coincide com os 107.987.357 declarados pelo SNAP~\cite{snapnets}, e o coeficiente de clusterização médio, arredondado, coincide com o 0,0891 declarado. A coincidência é compatível com a convenção adotada, que atribui coeficiente nulo aos vértices de grau menor que 2 e os mantém na média, e com o tratamento, que não removeu nenhuma aresta (Seção~\ref{sec:tratamento}).
+
+A transitividade global é bem maior que o coeficiente médio. A transitividade equivale a uma média dos coeficientes locais ponderada pelo número de pares de vizinhos de cada vértice, $k_v(k_v-1)/2$, enquanto o coeficiente médio dá o mesmo peso a todos os vértices. A diferença mostra, portanto, que os vértices de grau alto têm, em média, coeficiente local maior que os de grau baixo.
+
+Os tempos da Tabela~\ref{tab:clusterizacao} correspondem a uma única execução de cada cálculo. O igraph, implementado em C, calcula o coeficiente médio e a transitividade em cerca de um segundo, enquanto o networkx, em Python, leva minutos. Na contagem de triângulos a ordem se inverte: a contagem direta do igraph, que enumera os subgrafos de 3 vértices, é mais lenta que a soma dos triângulos por vértice do networkx.
