@@ -4,3 +4,19 @@
 \subsection{Cálculo das distâncias}
 
 O diâmetro, o raio e o comprimento médio dos caminhos dependem da distância entre todos os pares de vértices da maior componente. Como o grafo não tem pesos, a distância a partir de uma fonte é obtida por uma busca em largura (BFS), em tempo $O(n + m)$, e todas as distâncias, por uma BFS a partir de cada vértice, em tempo $O(n(n + m))$. Optou-se pelo cálculo exato em vez da estimativa por uma amostra de fontes, porque o tempo da passagem completa, executada uma única vez com o igraph, é viável (Tabela~\ref{tab:distancias}). Cada BFS guarda só a excentricidade da fonte e a soma das suas distâncias, e as fontes são processadas em lotes de 500, de modo que a matriz de distâncias, com $n^2$ entradas, nunca fica inteira na memória.
+
+\subsection{Medição de tempo}
+
+Os tempos de execução dos algoritmos foram medidos com o relógio monotônico de alta resolução \texttt{time.perf\_counter} do Python. Cada algoritmo é executado uma vez como aquecimento, cuja duração é descartada, e depois $R$ vezes, com $R$ declarado junto de cada medição. Das $R$ durações $x_1, \dots, x_R$ calculam-se a média $\bar{x}$ e o desvio padrão amostral
+\[
+  s = \sqrt{\frac{1}{R - 1} \sum_{i=1}^{R} (x_i - \bar{x})^2}.
+\]
+O intervalo de confiança de 95\% para o tempo médio usa a distribuição normal quando $R \geq 30$ e a $t$ de Student com $R - 1$ graus de liberdade quando $R < 30$, já que o desvio populacional $\sigma$ é desconhecido:
+\[
+  \bar{x} \pm z_{\alpha/2} \frac{s}{\sqrt{R}} \quad (R \geq 30),
+  \qquad
+  \bar{x} \pm t_{\alpha/2,\,R-1} \frac{s}{\sqrt{R}} \quad (R < 30),
+\]
+com $\alpha = 0{,}05$. Os valores críticos $z_{\alpha/2}$ e $t_{\alpha/2,\,R-1}$ são obtidos das funções de quantis do SciPy, e não de tabelas. Cada medição gera um registro com o algoritmo, a entrada, $R$, a média, o desvio, os limites do intervalo e a distribuição usada.
+
+Todas as medições foram feitas na mesma máquina: processador Intel Core i5-11320H de 3,20~GHz, com 4 núcleos e 8 threads, 16~GB de memória RAM, sistema operacional Ubuntu 24.04.5 LTS e Python 3.12.3.
