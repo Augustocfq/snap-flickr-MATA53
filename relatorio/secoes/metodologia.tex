@@ -1,2 +1,6 @@
 \section{Metodologia}
 \label{sec:metodologia}
+
+\subsection{Cálculo das distâncias}
+
+O diâmetro, o raio e o comprimento médio dos caminhos dependem da distância entre todos os pares de vértices da maior componente. Como o grafo não tem pesos, a distância a partir de uma fonte é obtida por uma busca em largura (BFS), em tempo $O(n + m)$, e todas as distâncias, por uma BFS a partir de cada vértice, em tempo $O(n(n + m))$. Optou-se pelo cálculo exato em vez da estimativa por uma amostra de fontes, porque o tempo da passagem completa, executada uma única vez com o igraph, é viável (Tabela~\ref{tab:distancias}). Cada BFS guarda só a excentricidade da fonte e a soma das suas distâncias, e as fontes são processadas em lotes de 500, de modo que a matriz de distâncias, com $n^2$ entradas, nunca fica inteira na memória.

@@ -65,3 +65,16 @@ O número de triângulos coincide com os 107.987.357 declarados pelo SNAP~\cite{
 A transitividade global é bem maior que o coeficiente médio. A transitividade equivale a uma média dos coeficientes locais ponderada pelo número de pares de vizinhos de cada vértice, $k_v(k_v-1)/2$, enquanto o coeficiente médio dá o mesmo peso a todos os vértices. A diferença mostra, portanto, que os vértices de grau alto têm, em média, coeficiente local maior que os de grau baixo.
 
 Os tempos da Tabela~\ref{tab:clusterizacao} correspondem a uma única execução de cada cálculo. O igraph, implementado em C, calcula o coeficiente médio e a transitividade em cerca de um segundo, enquanto o networkx, em Python, leva minutos. Na contagem de triângulos a ordem se inverte: a contagem direta do igraph, que enumera os subgrafos de 3 vértices, é mais lenta que a soma dos triângulos por vértice do networkx.
+
+\subsubsection{Diâmetro, raio e comprimento médio dos caminhos}
+
+O diâmetro, o raio e o comprimento médio dos caminhos foram calculados de forma exata sobre a maior componente, onde todas as distâncias são finitas (Seção~\ref{sec:tratamento}), pelo método descrito na Seção~\ref{sec:metodologia}. A excentricidade de um vértice é a maior distância dele até outro vértice. O diâmetro é a maior excentricidade, o raio é a menor, e o comprimento médio é a média das distâncias sobre todos os $n(n-1)$ pares ordenados de vértices distintos. A Tabela~\ref{tab:distancias} reúne os valores e o tempo do cálculo.
+
+\begin{table*}[htbp]
+  \centering
+  \caption{Diâmetro, raio e comprimento médio dos caminhos da maior componente, calculados de forma exata com uma BFS a partir de cada vértice, e o tempo dessa passagem de BFS.}
+  \label{tab:distancias}
+  \input{../results/tables/distancias.tex}
+\end{table*}
+
+O diâmetro coincide com o valor 9 declarado pelo SNAP~\cite{snapnets}. Verificou-se que o raio está entre metade do diâmetro e o diâmetro, como a desigualdade triangular garante. O comprimento médio é bem menor que o diâmetro: embora existam pares de imagens a nove passos de distância, a distância típica entre duas imagens é inferior à metade dele, ou seja, a componente de mais de cem mil vértices é percorrida em poucos saltos.
