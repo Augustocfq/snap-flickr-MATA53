@@ -78,3 +78,25 @@ O diâmetro, o raio e o comprimento médio dos caminhos foram calculados de form
 \end{table*}
 
 O diâmetro coincide com o valor 9 declarado pelo SNAP~\cite{snapnets}. Verificou-se que o raio está entre metade do diâmetro e o diâmetro, como a desigualdade triangular garante. O comprimento médio é bem menor que o diâmetro: embora existam pares de imagens a nove passos de distância, a distância típica entre duas imagens é inferior à metade dele, ou seja, a componente de mais de cem mil vértices é percorrida em poucos saltos.
+
+\subsubsection{Visualização e cobertura}
+
+O grafo inteiro tem vértices demais para um desenho legível, por isso a visualização usa uma versão reduzida dele, amostrada por bola: sorteou-se, com a semente fixa do trabalho, um vértice da maior componente, e a amostra é o subgrafo induzido pelos 300 primeiros vértices alcançados por uma BFS a partir dele (Figura~\ref{fig:visualizacao}). O tamanho de cada vértice é proporcional ao seu grau na maior componente.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{../results/figures/visualizacao.pdf}
+  \caption{Subgrafo induzido pelos 300 primeiros vértices alcançados por uma BFS a partir de um vértice sorteado da maior componente, em vermelho. O tamanho de cada vértice é proporcional ao seu grau na maior componente, e o número de vértices e de arestas da amostra está escrito no canto inferior esquerdo.}
+  \label{fig:visualizacao}
+\end{figure}
+
+A Figura~\ref{fig:visualizacao} mostra a amostra organizada em torno de poucos vértices de grau alto, cada um ligado a um leque de vértices que, dentro da amostra, só se ligam a ele. Três desses hubs se ligam entre si e formam um núcleo denso, e um quarto hub se liga a esse núcleo por poucas arestas. Como a BFS para no meio de uma camada, a amostra é parcial e não permite estimar medidas do grafo. Ela ilustra apenas a estrutura local de hubs que a distribuição de graus (Figura~\ref{fig:graus_loglog}) sugere.
+
+A Tabela~\ref{tab:cobertura_parte1} lista cada medida da Parte I pedida no enunciado, se foi calculada, se o valor é exato ou vem de amostra e sobre qual grafo foi obtido. Todas as medidas foram calculadas, e todas, exceto a visualização, de forma exata, de modo que nenhuma precisou de justificativa por ausência. As medidas de distância usam a maior componente, porque no grafo completo as distâncias entre componentes diferentes são infinitas (Seção~\ref{sec:tratamento}).
+
+\begin{table*}[htbp]
+  \centering
+  \caption{Cobertura das medidas da Parte I: se cada medida foi calculada, se o valor é exato ou vem de amostra e o grafo usado, completo ou a maior componente.}
+  \label{tab:cobertura_parte1}
+  \input{../results/tables/cobertura_parte1.tex}
+\end{table*}
