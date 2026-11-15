@@ -1,2 +1,28 @@
 \subsection{Parte II -- Algoritmos}
 \label{sec:parte2}
+
+\subsubsection{Busca em largura e busca em profundidade}
+
+A busca em largura (BFS) e a busca em profundidade (DFS) foram implementadas de forma própria, sobre lista de adjacência, e executadas na maior componente, na qual toda fonte alcança todos os vértices. A BFS segue a formulação da disciplina: uma fila (\texttt{collections.deque}) recebe a fonte, e cada vértice retirado dela atribui distância $d[u] + 1$ aos vizinhos ainda não descobertos e os enfileira. A DFS é iterativa, com pilha explícita: cada vértice desempilhado ainda não visitado é marcado e empilha os vizinhos não visitados. A versão recursiva foi evitada porque a profundidade da recursão pode chegar ao número de vértices, da ordem de $10^5$, e estouraria a pilha de chamadas do Python.
+
+A BFS própria foi conferida com o networkx em 5 fontes sorteadas: as distâncias de todos os vértices coincidem. Nas mesmas fontes, a DFS própria alcança o mesmo conjunto de vértices que a DFS do networkx.
+
+\paragraph{Complexidade teórica.} Nos dois algoritmos, cada vértice é descoberto uma única vez, e a lista de adjacência de cada vértice é percorrida uma única vez, quando ele sai da fila ou é visitado pela primeira vez na pilha. Como a soma dos tamanhos das listas é $2m$, o tempo é $O(n + m)$. Na DFS, cada aresta empilha no máximo um vértice em cada sentido, de modo que a pilha recebe no máximo $2m + 1$ entradas, e o limite $O(n + m)$ se mantém.
+
+\paragraph{Complexidade observada.} Para observar a dependência em $n + m$, os dois algoritmos foram executados em cinco subgrafos conexos da maior componente, induzidos pelos primeiros 20\%, 40\%, 60\%, 80\% e 100\% dos vértices na ordem de visita de uma DFS. Em cada subgrafo, cada algoritmo foi executado $R = 30$ vezes, depois de uma execução de aquecimento, cada vez a partir de uma fonte sorteada com semente fixa. Com $R \geq 30$, o intervalo de confiança de 95\% usa a distribuição normal (Seção~\ref{sec:metodologia}). A Tabela~\ref{tab:tempos_buscas} reúne a média, o desvio padrão e o intervalo de cada medição, e a Figura~\ref{fig:tempos_buscas} põe o tempo médio contra $n + m$.
+
+\begin{table*}[htbp]
+  \centering
+  \caption{Tempo de execução da BFS e da DFS próprias em subgrafos conexos crescentes da maior componente, com $R$ execuções a partir de fontes aleatórias: média, desvio padrão amostral e intervalo de confiança de 95\%.}
+  \label{tab:tempos_buscas}
+  \input{../results/tables/tempos_buscas.tex}
+\end{table*}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{../results/figures/tempos_buscas.pdf}
+  \caption{Tempo médio da BFS e da DFS próprias em função de $n + m$, com o intervalo de confiança de 95\% como barra de erro.}
+  \label{fig:tempos_buscas}
+\end{figure}
+
+Na Figura~\ref{fig:tempos_buscas}, o tempo dos dois algoritmos cresce aproximadamente em linha reta com $n + m$, como prevê a complexidade $O(n + m)$. O ponto de 80\% dos vértices da DFS fica um pouco acima da reta. Nesse subgrafo, os dois algoritmos têm os maiores desvios da Tabela~\ref{tab:tempos_buscas}, isto é, as execuções variaram mais entre si do que nos demais. A DFS é cerca de duas vezes mais lenta que a BFS em todos os subgrafos: a ordem de crescimento é a mesma, mas a DFS empilha cada vizinho não visitado e só o descarta ao desempilhá-lo, o que aumenta o trabalho constante por aresta. Os intervalos de confiança são estreitos em relação à média, porque o custo de cada execução não depende da fonte quando todos os vértices são alcançados.
