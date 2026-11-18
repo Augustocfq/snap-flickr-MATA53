@@ -23,3 +23,31 @@ As referências do grafo aleatório foram obtidas de duas formas, com o $n$ e o 
 \paragraph{Faz sentido para este grafo?} Sim. As arestas ligam imagens que compartilham metadados (Seção~\ref{sec:descricao}): o mesmo local, a mesma galeria, grupo ou conjunto, tags em comum ou autores amigos. Imagens que compartilham um desses atributos tendem a estar todas ligadas entre si, o que forma grupos densos e explica a clusterização alta. Ao mesmo tempo, uma imagem tem vários atributos, cada um a liga a um grupo diferente, e há vértices de grau muito alto (Tabela~\ref{tab:basicas}), de modo que poucos saltos bastam para passar de um grupo a outro, o que explica o comprimento médio curto.
 
 \paragraph{Qual é a implicação prática?} Qualquer imagem da maior componente é alcançada a partir de qualquer outra em poucos saltos por metadados compartilhados, e a vizinhança de cada imagem é coesa. Para a rotulação de imagens a partir dos metadados, que motivou o grafo~\cite{mcauley2012image}, isso significa que os vizinhos de uma imagem formam um contexto local consistente, e que a informação propagada pelas arestas se espalha pela componente inteira em poucas iterações. Pela mesma razão, uma busca a partir de uma imagem cobre rapidamente grande parte do acervo.
+
+\subsubsection{Lei de potência}
+
+Uma distribuição de graus segue uma lei de potência quando $P(k) \propto k^{-\alpha}$, com $\alpha > 1$. Em escala log-log, a distribuição acumulada complementar (CCDF) $P(K \geq k)$ de uma lei de potência é uma reta de inclinação $1 - \alpha$. A CCDF foi usada no lugar de $P(k)$ porque não tem a faixa horizontal de graus que aparecem uma única vez (Figura~\ref{fig:graus_loglog}): cada ponto acumula todos os vértices de grau igual ou maior.
+
+A CCDF foi calculada a partir da distribuição de graus exata do grafo simples completo (Seção~\ref{sec:parte1}). Como uma lei de potência costuma valer só a partir de um grau mínimo $k_{\min}$, o ajuste considera apenas os $N$ vértices com $k \geq k_{\min}$. Para cada candidato a $k_{\min}$ entre os graus observados, o expoente foi estimado pelo estimador de máxima verossimilhança discreto aproximado,
+\[
+\alpha = 1 + N \left[ \sum_{i=1}^{N} \ln \frac{k_i}{k_{\min} - \frac{1}{2}} \right]^{-1},
+\]
+e a distância de Kolmogorov-Smirnov (KS) mediu a maior diferença entre a CCDF empírica da cauda e a do modelo, $((k - \frac{1}{2})/(k_{\min} - \frac{1}{2}))^{1-\alpha}$, nos graus observados. Escolheu-se o $k_{\min}$ de menor distância. O maior grau ficou fora dos candidatos, porque uma cauda com um único vértice coincide com o modelo por construção e daria distância nula. A Tabela~\ref{tab:lei_potencia} reúne o resultado, e a Figura~\ref{fig:ccdf_loglog} sobrepõe à CCDF empírica a reta ajustada, escalada pela fração da cauda.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Ajuste da lei de potência à cauda da distribuição de graus do grafo simples completo: grau mínimo $k_{\min}$ escolhido pela menor distância KS, expoente $\alpha$ estimado por máxima verossimilhança discreta aproximada, número e fração dos vértices com $k \geq k_{\min}$ e distância KS do ajuste.}
+  \label{tab:lei_potencia}
+  \input{../results/tables/lei_potencia.tex}
+\end{table}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{../results/figures/ccdf_loglog.pdf}
+  \caption{CCDF $P(K \geq k)$ dos graus do grafo simples completo em escala log-log, com a lei de potência ajustada a partir de $k_{\min}$ (Tabela~\ref{tab:lei_potencia}).}
+  \label{fig:ccdf_loglog}
+\end{figure}
+
+\paragraph{A distribuição sugere lei de potência?} Só em parte: o ajuste vale num trecho estreito do extremo da cauda, e não na distribuição como um todo. Na Figura~\ref{fig:ccdf_loglog}, a CCDF não é uma reta única. Até perto de $k = 5$ ela fica próxima de 1, porque graus menores são raros. Entre algumas dezenas e algumas centenas de vizinhos ela decresce devagar e com curvatura, e depois cai de forma abrupta. A menor distância KS escolheu $k_{\min}$ nessa queda final, e o trecho ajustado contém só uma pequena fração dos vértices (Tabela~\ref{tab:lei_potencia}). Ele vai de $k_{\min}$ até o grau máximo da Tabela~\ref{tab:basicas}, menos de uma ordem de grandeza de $k$. Nele, a reta acompanha bem os pontos, com distância KS pequena, mas o expoente obtido é alto, o que corresponde a uma cauda que decai depressa, e o vértice de maior grau fica bem acima da reta, isolado como já se via na Figura~\ref{fig:graus_loglog}. A conclusão, portanto, é condicional ao trecho $k \geq k_{\min}$: nele, a lei de potência descreve bem a CCDF, mas abaixo dele, onde está quase todo o grafo, não.
+
+\paragraph{Limitações.} A linearidade em escala log-log, sozinha, não demonstra uma lei de potência. Qualquer curva parece aproximadamente reta num intervalo curto de $k$, e o trecho ajustado aqui cobre menos de uma década. Outras distribuições de cauda pesada, como a log-normal ou uma lei de potência com corte exponencial, também produzem trechos quase retos, e o ajuste não as compara. A distância KS mede só a qualidade do ajuste na cauda escolhida e, sem um teste de hipótese com amostras sintéticas, não diz se a diferença observada é compatível com uma lei de potência verdadeira. Por fim, a escolha de $k_{\min}$ pela menor distância pode recair em caudas curtas, em que poucos pontos se ajustam facilmente a uma reta, como mostra o caso extremo da cauda de um único vértice, excluído dos candidatos, e o estimador de $\alpha$ é uma aproximação da máxima verossimilhança discreta.
