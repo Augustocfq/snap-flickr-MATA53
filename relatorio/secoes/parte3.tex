@@ -1,2 +1,25 @@
 \subsection{Parte III -- Perguntas}
 \label{sec:parte3}
+
+\subsubsection{Small-world}
+
+Um grafo é small-world quando o seu comprimento médio dos caminhos $L$ é aproximadamente o de um grafo aleatório equivalente, $L \approx L_{\mathrm{rand}}$, e o seu coeficiente de clusterização médio $C$ é muito maior que o desse grafo, $C \gg C_{\mathrm{rand}}$. As duas condições foram resumidas no coeficiente $\sigma = (C/C_{\mathrm{rand}})/(L/L_{\mathrm{rand}})$, que fica bem acima de 1 num grafo small-world.
+
+$C$ e $L$ foram calculados com código próprio, sem as funções de small-world das bibliotecas. O coeficiente de clusterização médio usa a interseção dos conjuntos de adjacência: para cada aresta $(u, v)$, $|N(u) \cap N(v)|$ é o número de triângulos que contêm a aresta, e a soma sobre as arestas de $u$ conta cada triângulo de $u$ duas vezes, o que dá $C_u = 2T(u)/(k_u(k_u-1))$. Ele foi calculado sobre o grafo simples completo, com a mesma convenção da Seção~\ref{sec:parte1} para os vértices de grau menor que 2, e coincide com o valor da Tabela~\ref{tab:clusterizacao}, o que foi conferido com o igraph com tolerância de $10^{-6}$.
+
+O comprimento médio foi estimado na maior componente, onde todas as distâncias são finitas, com a BFS própria da Seção~\ref{sec:parte2} a partir de 1.000 fontes sorteadas sem reposição com semente fixa. Cada fonte dá a média das suas distâncias até os demais vértices, e $L$ é a média dessas médias, com intervalo de confiança de 95\% pela distribuição normal, já que a amostra tem mais de 30 fontes. A estimativa é amostral, e não exata, porque a BFS própria leva uma fração de segundo por fonte na maior componente (Tabela~\ref{tab:tempos_buscas}), o que somaria horas a partir de todos os vértices. O valor exato da Tabela~\ref{tab:distancias} está dentro do intervalo obtido.
+
+As referências do grafo aleatório foram obtidas de duas formas, com o $n$ e o grau médio $\langle k \rangle$ do grafo simples (Tabela~\ref{tab:basicas}): pelas fórmulas $C_{\mathrm{rand}} \approx \langle k \rangle/n$ e $L_{\mathrm{rand}} \approx \ln n/\ln \langle k \rangle$ e por uma instância Erdős--Rényi $G(n, p)$, com $p = \langle k \rangle/(n-1)$, gerada com semente fixa, na qual $C$ e $L$ foram calculados pelas mesmas funções próprias e com o mesmo número de fontes. A Tabela~\ref{tab:small_world} reúne os valores e o $\sigma$ obtido com cada referência.
+
+\begin{table*}[htbp]
+  \centering
+  \caption{Coeficiente de clusterização médio $C$ e comprimento médio dos caminhos $L$ do web-flickr e das duas referências aleatórias, com o coeficiente $\sigma$ calculado em relação a cada referência. No web-flickr, $C$ é exato sobre o grafo simples completo e $L$ é estimado na maior componente a partir de 1.000 fontes, com intervalo de confiança de 95\%. Na instância $G(n, p)$, $C$ é exato e $L$ é estimado da mesma forma.}
+  \label{tab:small_world}
+  \input{../results/tables/small_world.tex}
+\end{table*}
+
+\paragraph{Há indícios de small-world?} Sim. Na Tabela~\ref{tab:small_world}, o coeficiente de clusterização do web-flickr é duas ordens de grandeza maior que o das duas referências aleatórias, enquanto o comprimento médio dos caminhos fica próximo do delas, pouco acima. Com as duas referências, $\sigma$ é da ordem de centenas, muito acima de 1. As duas referências concordam no coeficiente de clusterização. No comprimento médio, a fórmula $\ln n/\ln \langle k \rangle$ dá um valor menor que o medido na instância $G(n, p)$, mas a conclusão não muda, porque $\sigma$ fica muito acima de 1 nos dois casos.
+
+\paragraph{Faz sentido para este grafo?} Sim. As arestas ligam imagens que compartilham metadados (Seção~\ref{sec:descricao}): o mesmo local, a mesma galeria, grupo ou conjunto, tags em comum ou autores amigos. Imagens que compartilham um desses atributos tendem a estar todas ligadas entre si, o que forma grupos densos e explica a clusterização alta. Ao mesmo tempo, uma imagem tem vários atributos, cada um a liga a um grupo diferente, e há vértices de grau muito alto (Tabela~\ref{tab:basicas}), de modo que poucos saltos bastam para passar de um grupo a outro, o que explica o comprimento médio curto.
+
+\paragraph{Qual é a implicação prática?} Qualquer imagem da maior componente é alcançada a partir de qualquer outra em poucos saltos por metadados compartilhados, e a vizinhança de cada imagem é coesa. Para a rotulação de imagens a partir dos metadados, que motivou o grafo~\cite{mcauley2012image}, isso significa que os vizinhos de uma imagem formam um contexto local consistente, e que a informação propagada pelas arestas se espalha pela componente inteira em poucas iterações. Pela mesma razão, uma busca a partir de uma imagem cobre rapidamente grande parte do acervo.
