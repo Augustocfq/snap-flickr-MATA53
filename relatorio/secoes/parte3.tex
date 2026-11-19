@@ -85,3 +85,31 @@ Como o grafo restante é reconstruído a cada repetição, as componentes e as b
   \item D: a fração de vértices isolados é da ordem de $10^{-4}$, isto é, a remoção isola uma quantidade ínfima de vértices.
 \end{itemize}
 Portanto, a falha aleatória de 5\% dos vértices quase só remove os próprios vértices sorteados: a estrutura do restante, a conectividade e as distâncias são preservadas. Isso é compatível com o grau médio alto do grafo (Tabela~\ref{tab:basicas}): um vértice típico tem muitos vizinhos e só fica isolado se todos eles forem sorteados, o que é improvável quando só 5\% dos vértices são removidos.
+
+\subsubsection{Robustez a ataque direcionado}
+
+O ataque direcionado remove os vértices mais importantes segundo uma centralidade. Usou-se a centralidade de grau, uma das duas que a descrição do trabalho recomenda, porque ela custa $O(n + m)$, enquanto a betweenness exata exige uma busca em largura a partir de cada um dos $n_0$ vértices da maior componente, mais o acúmulo das dependências de cada fonte. Só essas buscas equivalem à passagem única que deu o diâmetro, cujo tempo está na Tabela~\ref{tab:distancias}, e esse custo seria pago sobre o grafo inteiro.
+
+O ranking é fixo: o grau de cada vértice foi calculado uma única vez, na maior componente intacta e antes de qualquer remoção, e os vértices foram ordenados do maior grau para o menor, com empates resolvidos pelo menor ID. Os $r = \lceil 0{,}05\, n_0 \rceil$ primeiros do ranking, o mesmo número de vértices da remoção aleatória, foram removidos com as suas arestas. As métricas A a D foram medidas pela mesma função da remoção aleatória, com C estimado a partir de 100 fontes da maior componente restante, sorteadas com a semente fixa do trabalho. A mesma função, aplicada à maior componente sem remoção, deu os valores originais: $A = 1$, $B = 1$ e $D = 0$, por definição, e uma estimativa de C com o mesmo número de fontes, próxima do valor exato da Tabela~\ref{tab:distancias}. A Tabela~\ref{tab:robustez_comparacao} põe lado a lado os três cenários, e a Figura~\ref{fig:robustez_comparacao} mostra cada métrica.
+
+\begin{table*}[htbp]
+  \centering
+  \caption{Métricas A a D na maior componente original, após a remoção aleatória de $\lceil 0{,}05\, n_0 \rceil$ vértices (média e desvio padrão amostral nas 30 repetições da Tabela~\ref{tab:robustez_aleatoria}) e após a remoção dos $\lceil 0{,}05\, n_0 \rceil$ vértices de maior grau. A última coluna é o valor do ataque direcionado dividido pela média da remoção aleatória. A, B e D são exatas, e C é estimada por busca em largura a partir de 100 fontes.}
+  \label{tab:robustez_comparacao}
+  \input{../results/tables/robustez_comparacao.tex}
+\end{table*}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{../results/figures/robustez_comparacao.pdf}
+  \caption{Métricas A a D na maior componente original, após a remoção aleatória de 5\% dos vértices (média, com o desvio padrão das 30 repetições) e após a remoção dos 5\% de maior grau.}
+  \label{fig:robustez_comparacao}
+\end{figure}
+
+\paragraph{A rede é muito mais vulnerável a ataques direcionados do que a falhas aleatórias?} Não, pelo critério da descrição do trabalho, que exige $S_{\mathrm{rand}} \gg S_{\mathrm{cent}}$ e $C_{\mathrm{cent}} \gg C_{\mathrm{rand}}$, em que $S$ é a métrica A e $C$, aqui, o comprimento médio da métrica C. O ataque direcionado é pior que a remoção aleatória nas quatro métricas, mas a degradação da maior componente e das distâncias é da mesma ordem nos dois cenários (Tabela~\ref{tab:robustez_comparacao}).
+\begin{itemize}
+  \item A: a maior componente restante é um pouco menor que na remoção aleatória, e a razão entre os dois cenários fica perto de 1. Ela continua com quase todos os vértices que sobraram, isto é, $S_{\mathrm{cent}}$ é pouco menor que $S_{\mathrm{rand}}$, e não muito menor.
+  \item C: o comprimento médio aumenta mais que na remoção aleatória, já que os vértices de maior grau são os atalhos entre regiões distantes, mas o aumento é uma fração de salto em relação aos outros dois cenários. $C_{\mathrm{cent}}$ é maior que $C_{\mathrm{rand}}$, mas não muito maior.
+  \item B e D: aqui a diferença é de centenas de vezes. O ataque produz milhares de componentes, e a fração de vértices isolados passa de uma ordem de $10^{-4}$ para uma de $10^{-2}$. Somada à maior componente, essa fração responde por praticamente todos os vértices restantes, ou seja, as novas componentes são, na maior parte, vértices isolados.
+\end{itemize}
+Portanto, a remoção dos vértices de maior grau não parte a rede em pedaços comparáveis: ela desliga da maior componente os vértices cujos vizinhos estavam quase todos entre os removidos, que ficam sozinhos, e alonga um pouco os caminhos, enquanto o núcleo conectado sobrevive. Pelo critério adotado, a rede não depende de uns poucos vértices críticos para manter a maior componente e as distâncias, embora o ataque direcionado fragmente a periferia muito mais que a falha aleatória.
