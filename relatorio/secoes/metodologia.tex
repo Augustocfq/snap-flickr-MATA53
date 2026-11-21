@@ -1,6 +1,31 @@
 \section{Metodologia}
 \label{sec:metodologia}
 
+\subsection{Pipeline de execução}
+
+Um único notebook Jupyter, \texttt{main.ipynb}, reúne todo o trabalho executável: ele chama as funções do pacote \texttt{src} e grava o grafo tratado em \texttt{data/processed}, as tabelas em \texttt{results/tables} e as figuras em \texttt{results/figures}, incluídas neste relatório. Os resultados apresentados vêm de uma execução do notebook inteiro, em ordem, numa única sessão e na mesma máquina, de modo que os tempos medidos são comparáveis entre si. As etapas mais custosas gravam o resultado num cache local, que as execuções seguintes leem em vez de recalcular. A execução que gerou os resultados partiu do cache vazio. Toda escolha aleatória (fontes, amostras, pesos, remoções e o grafo aleatório de comparação) parte da semente fixa 224215938, declarada em \texttt{src/config.py}, e por isso uma nova execução reproduz os mesmos resultados, exceto os tempos medidos.
+
+As seções do notebook, na ordem de execução, são:
+\begin{enumerate}
+  \item \emph{Leitura do grafo}: lê a lista de arestas comprimida baixada do SNAP, sem descompactá-la em disco, e mostra as contagens brutas, o histograma dos graus brutos e a vizinhança de um vértice sorteado.
+  \item \emph{Tratamento dos dados}: constrói o grafo simples não direcionado e extrai a maior componente conexa, gravados em \texttt{data/processed} com o mapa dos IDs originais (Seção~\ref{sec:tratamento}).
+  \item \emph{Medidas básicas e componentes}: vértices, arestas, graus, densidade e componentes conexas do grafo simples, com o número de componentes conferido entre o networkx e o igraph.
+  \item \emph{Distribuição de graus}: frequência de cada grau do grafo simples, em escala linear e log-log, gravada também em CSV para o ajuste da lei de potência.
+  \item \emph{Clusterização e triângulos}: triângulos, coeficiente de clusterização médio e transitividade global do grafo simples, calculados com o networkx e conferidos com o igraph.
+  \item \emph{Diâmetro, raio e comprimento médio dos caminhos}: valores exatos na maior componente, pelo procedimento da subseção Cálculo das distâncias.
+  \item \emph{Visualização e cobertura da Parte I}: desenho de uma amostra por bola da maior componente e tabela de cobertura das medidas da Parte I (Seção~\ref{sec:parte1}).
+  \item \emph{Medição de tempo}: conferência, com valores conhecidos, da função que mede os tempos, descrita na subseção Medição de tempo.
+  \item \emph{BFS e DFS}: implementações próprias da busca em largura e da busca em profundidade, conferidas com o networkx e cronometradas na maior componente e em subgrafos conexos crescentes dela.
+  \item \emph{Eulerianidade e Tarjan}: verificação de Eulerianidade e algoritmo de Tarjan próprios, conferidos com o networkx e cronometrados no grafo simples, na maior componente e em subgrafos conexos crescentes dela.
+  \item \emph{Dijkstra e Bellman-Ford}: implementações próprias, conferidas com a BFS própria, com pesos unitários, e com o networkx, com pesos aleatórios, e cronometradas na maior componente e em subgrafos conexos crescentes dela.
+  \item \emph{Floyd-Warshall}: implementação própria, conferida com o Dijkstra próprio e cronometrada em subgrafos da maior componente amostrados por bolas BFS.
+  \item \emph{Árvore geradora mínima (Kruskal)}: implementação própria, com o peso total conferido com o networkx, cronometrada na maior componente e em subgrafos conexos crescentes dela (Seção~\ref{sec:parte2}).
+  \item \emph{Small-world}: coeficiente de clusterização médio e comprimento médio dos caminhos calculados com código próprio e comparados com os do grafo aleatório equivalente.
+  \item \emph{Lei de potência}: ajuste de uma lei de potência à cauda da distribuição de graus, lida do CSV gravado na seção Distribuição de graus.
+  \item \emph{Robustez à remoção aleatória}: remoções repetidas de 5\% dos vértices da maior componente, sorteados uniformemente, com as métricas A a D de cada repetição.
+  \item \emph{Robustez a ataque direcionado}: remoção dos 5\% de vértices de maior grau da maior componente e comparação das métricas A a D com as da remoção aleatória (Seção~\ref{sec:parte3}).
+\end{enumerate}
+
 \subsection{Cálculo das distâncias}
 
 O diâmetro, o raio e o comprimento médio dos caminhos dependem da distância entre todos os pares de vértices da maior componente. Como o grafo não tem pesos, a distância a partir de uma fonte é obtida por uma busca em largura (BFS), em tempo $O(n + m)$, e todas as distâncias, por uma BFS a partir de cada vértice, em tempo $O(n(n + m))$. Optou-se pelo cálculo exato em vez da estimativa por uma amostra de fontes, porque o tempo da passagem completa, executada uma única vez com o igraph, é viável (Tabela~\ref{tab:distancias}). Cada BFS guarda só a excentricidade da fonte e a soma das suas distâncias, e as fontes são processadas em lotes de 500, de modo que a matriz de distâncias, com $n^2$ entradas, nunca fica inteira na memória.
