@@ -1,2 +1,16 @@
 \section{Conclusão}
 \label{sec:conclusao}
+
+Este trabalho aplicou os conceitos da disciplina ao web-flickr, o grafo G114, em que as imagens do Flickr são ligadas por metadados compartilhados: tratou a lista de arestas, mediu a estrutura do grafo, implementou e cronometrou os algoritmos estudados e respondeu às perguntas obrigatórias sobre a sua estrutura.
+
+O tratamento mostrou que a lista de arestas já formava um grafo simples (Tabela~\ref{tab:tratamento}), e as medidas exatas da Parte I reproduziram os valores declarados pelo SNAP para os vértices, as arestas, a maior componente, os triângulos, o coeficiente de clusterização médio e o diâmetro (Tabelas~\ref{tab:basicas}, \ref{tab:clusterizacao} e~\ref{tab:distancias}). Na Parte II, as implementações próprias deram os mesmos resultados que o networkx, e os tempos medidos acompanharam a complexidade teórica de cada algoritmo. O Bellman-Ford com parada antecipada ficou muito abaixo do limite $O(nm)$ do pior caso, porque poucas rodadas bastam neste grafo (Tabela~\ref{tab:tempos_caminhos}), e o Floyd-Warshall cresceu com expoente um pouco acima do 3 teórico (Figura~\ref{fig:floyd_escala}).
+
+As respostas às perguntas obrigatórias são as seguintes.
+\begin{itemize}
+  \item \emph{Small-world}: sim. O coeficiente de clusterização é duas ordens de grandeza maior que o do grafo aleatório equivalente, e o comprimento médio dos caminhos fica próximo do dele, de modo que $\sigma$ fica muito acima de 1 (Tabela~\ref{tab:small_world}). Isso é coerente com um grafo em que cada metadado reúne imagens num grupo denso e cada imagem pertence a vários grupos.
+  \item \emph{Lei de potência}: só em parte. O ajuste vale apenas no extremo da cauda, que reúne uma pequena fração dos vértices e menos de uma década de graus (Tabela~\ref{tab:lei_potencia} e Figura~\ref{fig:ccdf_loglog}), e não permite classificar o grafo como livre de escala.
+  \item \emph{Robustez}: a rede é robusta à remoção aleatória de 5\% dos vértices, que quase só remove os vértices sorteados (Tabela~\ref{tab:robustez_aleatoria}). Também não é muito mais vulnerável à remoção dos 5\% de maior grau, pelo critério da maior componente e do comprimento médio, mas esse ataque isola muito mais vértices da periferia que a falha aleatória (Tabela~\ref{tab:robustez_comparacao}).
+  \item \emph{Descoberta mais interessante}: os vértices de maior grau não são os elos que mantêm a rede conectada. Eles ficam em grupos densos e redundantes entre si, como indicam a transitividade bem maior que o coeficiente médio (Tabela~\ref{tab:clusterizacao}) e o ataque direcionado, que quase não reduz a maior componente e só desliga as imagens ligadas apenas aos hubs (Tabela~\ref{tab:robustez_comparacao}).
+\end{itemize}
+
+Essas conclusões valem para a lista de arestas, sem a distinção entre os metadados que geraram cada ligação, e com as limitações discutidas na Seção~\ref{sec:discussao}. Uma referência aleatória que preserve a distribuição de graus, testes de hipótese contra distribuições alternativas à lei de potência e ataques que recalculam a centralidade a cada remoção são os passos que tornariam essas respostas mais firmes.
